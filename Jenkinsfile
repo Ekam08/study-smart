@@ -33,14 +33,14 @@ pipeline {
         }
 
         stage('Security Scan') {
-            steps {
-                sh '''
-                docker run --rm \
-                -v /var/run/docker.sock:/var/run/docker.sock \
-                aquasec/trivy image --exit-code 1 --severity HIGH,CRITICAL smart_study-backend || true
-                '''
-            }
-        }
+    steps {
+        sh '''
+        docker run --rm \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        aquasec/trivy image --severity HIGH,CRITICAL smart_study-backend || true
+        '''
+    }
+}
 
         stage('Deploy') {
             steps {
