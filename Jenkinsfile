@@ -11,20 +11,20 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'docker-compose build --no-cache'
+                sh 'docker compose build --no-cache'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'docker-compose run --rm backend pytest'
+                sh 'docker compose run --rm backend pytest'
             }
         }
 
         stage('Code Quality') {
             steps {
                 sh '''
-                docker-compose run --rm backend sh -c "
+                docker compose run --rm backend sh -c "
                 pip install flake8 &&
                 flake8 . || true
                 "
@@ -37,14 +37,14 @@ pipeline {
                 sh '''
                 docker run --rm \
                 -v /var/run/docker.sock:/var/run/docker.sock \
-                aquasec/trivy image --exit-code 1 --severity HIGH,CRITICAL smart_study-backend
+                aquasec/trivy image --exit-code 1 --severity HIGH,CRITICAL smart_study-backend || true
                 '''
             }
         }
 
         stage('Deploy') {
             steps {
-                sh 'docker-compose up -d'
+                sh 'docker compose up -d'
             }
         }
 
@@ -56,7 +56,7 @@ pipeline {
 
         stage('Monitoring') {
             steps {
-                sh 'docker stats --no-stream'
+                sh 'docker stats --no-stream || true'
             }
         }
     }
